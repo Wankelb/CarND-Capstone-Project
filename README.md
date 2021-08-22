@@ -34,6 +34,8 @@ The three core components of any good robot are the following:
 
 **Perception:** Sensing the environment to perceive obstacles, traffic hazards as well as traffic lights and road signs.
 There are two different deep learning models for the traffic light detection system. One is used in the simulator and the other on the proving ground. The obstacle detection system could be neglected. There are no obstacles either in the simulator or on the test site.
+
+
 **Planning:** Route planning to a given goal state using data from localization, perception and environment maps. The purpose of the planning module is to set target speeds based on mission requirements, roadmap and stage obstacles. This project is about protecting the middle lane, keeping the speed limit and stopping at red lights.
 
 The waypoint planner combines information from the traffic light detection node and key waypoints and vehicle exposure to create a final waypoint trajectory. The final trajectory is a list of waypoints with target speeds that the car should follow in the control block.
@@ -67,28 +69,28 @@ Here are the descriptions of the ROS nodes.
 **Waypoint Updater node (waypoint_updater):** This node sends the next 200 waypoints that are closest to and ahead of the vehicle's current location. This node also takes into account obstacles and traffic lights to adjust the speed of each waypoint.
 
 This node subscribes to the following topics:
-- base_waypoints: Waypoints for the entire track are published on this topic. This publication is a one-time process. The waypoint update node receives these waypoints, stores them for later use, and uses these points to extract the next 200 points ahead of the vehicle.
+- **base_waypoints:** Waypoints for the entire track are published on this topic. This publication is a one-time process. The waypoint update node receives these waypoints, stores them for later use, and uses these points to extract the next 200 points ahead of the vehicle.
 
-- traffic_waypoint: To get the index of the waypoint in the base_waypoints list that is closest to the red light so that the vehicle can be stopped. The waypoint update node uses this index to calculate the distance from the vehicle to the traffic light when the traffic light is red and the car needs to be stopped.
+- **traffic_waypoint:** To get the index of the waypoint in the base_waypoints list that is closest to the red light so that the vehicle can be stopped. The waypoint update node uses this index to calculate the distance from the vehicle to the traffic light when the traffic light is red and the car needs to be stopped.
 
-- current_pose: To get the current position of the vehicle.
+- **current_pose:** To get the current position of the vehicle.
 The function of the waypoint update node is to process the waypoints provided by the waypoint loader and to prepare the next waypoints for the vehicle. The speed will be adjusted if there is a red light in front of you.
 
 For the described process, if the track waypoints are already loaded, the following steps are followed:
 
-- Identify the position of the car in the car (pose_cb): If one knows the position of the car in (x, y) -coordinates, the closed-track point is returned as an index, which is ordered according to its Euclidean distance. Then the next few points in front of you (defined by the constant LOOKAHEAD_WPS) are the last unprocessed waypoints.
+- **Identify the position of the car in the car (pose_cb):** If one knows the position of the car in (x, y) -coordinates, the closed-track point is returned as an index, which is ordered according to its Euclidean distance. Then the next few points in front of you (defined by the constant LOOKAHEAD_WPS) are the last unprocessed waypoints.
 
-- Processing of waypoints (waypoints_process): The function runs through a loop through the following waypoints and the following options can run.
+- **Processing of waypoints (waypoints_process):** The function runs through a loop through the following waypoints and the following options can run.
 
-- Traffic light not close or green: The speed of the waypoints is updated with the maximum permissible speed
+- **Traffic light not close or green:** The speed of the waypoints is updated with the maximum permissible speed
 
-- Red and close traffic lights: the car has to stop. The speed is set to 0. set
+- **Red and close traffic lights:** the car has to stop. The speed is set to 0. set
 
-- Red traffic light in delay distance: car is approaching the traffic light, but is not yet that close. The speed decreases linearly.
+- **Red traffic light in delay distance:** car is approaching the traffic light, but is not yet that close. The speed decreases linearly.
 
 After the waypoints are updated, they are published and sent via the waypoint follower to the twist controller which implements the actuator commands. This node publishes on the following topics:
 
-- final_waypoints: Selected more than 100 waypoints including their speed information are published in this topic.
+- **final_waypoints:** Selected more than 100 waypoints including their speed information are published in this topic.
 
 <p align="center">
 <img src=".//node_dbw.png">
