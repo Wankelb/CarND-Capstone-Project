@@ -33,10 +33,20 @@ The following is a system architecture diagram showing the ROS nodes and topics 
 The three core components of any good robot are the following:
 
 Perception: Sensing the environment to perceive obstacles, traffic hazards as well as traffic lights and road signs.
+There are two different deep learning models for the traffic light detection system. One is used in the simulator and the other on the proving ground. The obstacle detection system could be neglected. There are no obstacles either in the simulator or on the test site.
+Planning: Route planning to a given goal state using data from localization, perception and environment maps. The purpose of the planning module is to set target speeds based on mission requirements, roadmap and stage obstacles. This project is about protecting the middle lane, keeping the speed limit and stopping at red lights.
 
-Planning: Route planning to a given goal state using data from localization, perception and environment maps.
+The waypoint planner combines information from the traffic light detection node and key waypoints and vehicle exposure to create a final waypoint trajectory. The final trajectory is a list of waypoints with target speeds that the car should follow in the control block.
 
-Control: Actualising trajectories formed as part of planning, in order actuate the vehicle, through steering, throttle and brake commands.
+When a traffic light is detected, Traffic_cb contains a valid stop line waypoint in front of the vehicle. If this stop line lies within the look-ahead distance, a geometric deceleration trajectory is calculated that is guaranteed not to exceed the maximum acceleration and jerk conditions. If no red lights are detected, the planner will return important waypoints to be followed within the speed limit.
+
+Control: Depending on the requirements, the control unit must publish the throttle, steering angle and braking torque at 50 Hz. In order to achieve this, a yaw regulator provides the steering angle that corresponds to the nominal linear and angular speeds, taking into account the current linear speed of the vehicle.
+
+The linear speed of the vehicle is controlled with a classic digital PID controller. In order to avoid any kind of aliasing, the speed tracking error is filtered with a single-pole low-pass filter and then fed to the controller.
+
+The controller signal is limited to the acceleration and deceleration limits of the vehicle. If the control command signals acceleration, the value is sent unchanged to the accelerator pedal. To avoid excessive braking and excessive jerk, the controller is configured to initially stop sending gas signals and only actively brake the vehicle when the required force exceeds the braking dead zone. Due to the asymptotic nature of PID control, we must force a full stop with the parking torque of 700 Nm when the vehicle speed drops below a threshold.
+
+Since the reference signal is relatively smooth, no automatic tuning process was required. The manual tuning began with the adjustment of the proportional gains and the comparison with the first seconds of the reference implementation. The other two components were adjusted using a manual process to minimize the root mean square error between the reference implementation and the output
 
  <p align="center">
 <img src=".//ros_nodes.png">
