@@ -1,10 +1,51 @@
-echo "# CarND-Capstone-Project"
+ <p align="center">
+<img src=".//bild22.jpeg">
+</p> 
 
 
 
-This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
+# CarND-Capstone-Project
+# System Integration
+The aim of this project is to implement a ROS-based core of an autonomous vehicle. The vehicle must be able to drive through a closed test track, recognize the traffic light and stop if necessary. The code is evaluated in a Unity simulator and a real Lincoln MKZ
+
+This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car.
 
 Please use **one** of the two installation options, either native **or** docker installation.
+
+Specifications
+
+The car should:
+
+- Smoothly follow waypoints in the simulator.
+- Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. 
+- Stop at traffic lights when needed.
+- Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled.
+- Publish throttle, steering, and brake commands at 50hz.
+
+
+# System(ROS) Architecture
+The following is a system architecture diagram showing the ROS nodes and topics used in the project.
+The three core components of any good robot are the following:
+
+Perception: Sensing the environment to perceive obstacles, traffic hazards as well as traffic lights and road signs.
+
+Planning: Route planning to a given goal state using data from localization, perception and environment maps.
+
+Control: Actualising trajectories formed as part of planning, in order actuate the vehicle, through steering, throttle and brake commands.
+
+ <p align="center">
+<img src=".//ros_nodes.png">
+</p> 
+
+# ROS Nodes Description
+Here are the descriptions of the ROS nodes.
+ <p align="center">
+<img src=".//node_tld.png">
+</p> 
+
+** Traffic Light Detection Node( tl_detector): ** This package contains the traffic light detection node: tl_detector.py. This node saves data from topics /image_color, /current_pose and /base_waypoints and broadcasts red traffic light stops in topic /Traffic_waypoints. The topic /current_pose contains the current location of the vehicle and /base_waypoints contains the complete list of waypoints that the vehicle will follow. You create both a traffic light detection node and a traffic light classification node.
+
+
 
 ### Native Installation
 
