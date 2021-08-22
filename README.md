@@ -75,6 +75,11 @@ After the waypoints are updated, they are published and sent via the waypoint fo
 
 - final_waypoints: Selected more than 100 waypoints including their speed information are published in this topic.
 
+<p align="center">
+<img src=".//node_dbw.png">
+</p> 
+
+**Twist_controller:** Carla is equipped with a wired drive system (dbw), which means that gas, brakes and steering are electronically controlled. This package contains the files responsible for controlling the tool: the dbw_node.py node and the twist_controller.py file, as well as a PID and low pass filter that you can use in your application. dbw_node subscribes to the / current_velocity topic with the / twist_cmd topic to get the target linear and angular velocities. Also, this node subscribes to / tool / dbw_enabled, which indicates whether the vehicle is in dbw or in driver control. This node outputs gas, braking and steering commands to / veh / gas_cmd, / vehicle / brake_cmd and / vehicle / steer_cmd.
 
 ### Native Installation
 
