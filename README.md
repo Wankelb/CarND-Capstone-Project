@@ -43,8 +43,37 @@ Here are the descriptions of the ROS nodes.
 <img src=".//node_tld.png">
 </p> 
 
-** Traffic Light Detection Node( tl_detector): ** This package contains the traffic light detection node: tl_detector.py. This node saves data from topics /image_color, /current_pose and /base_waypoints and broadcasts red traffic light stops in topic /Traffic_waypoints. The topic /current_pose contains the current location of the vehicle and /base_waypoints contains the complete list of waypoints that the vehicle will follow. You create both a traffic light detection node and a traffic light classification node.
+**Traffic Light Detection Node( tl_detector):** This package contains the traffic light detection node: tl_detector.py. This node saves data from topics /image_color, /current_pose and /base_waypoints and broadcasts red traffic light stops in topic /Traffic_waypoints. The topic /current_pose contains the current location of the vehicle and /base_waypoints contains the complete list of waypoints that the vehicle will follow. You create both a traffic light detection node and a traffic light classification node.
 
+ <p align="center">
+<img src=".//node_wpu.png">
+</p> 
+
+**Waypoint Updater node (waypoint_updater):** This node sends the next 200 waypoints that are closest to and ahead of the vehicle's current location. This node also takes into account obstacles and traffic lights to adjust the speed of each waypoint.
+
+This node subscribes to the following topics:
+- base_waypoints: Waypoints for the entire track are published on this topic. This publication is a one-time process. The waypoint update node receives these waypoints, stores them for later use, and uses these points to extract the next 200 points ahead of the vehicle.
+
+- traffic_waypoint: To get the index of the waypoint in the base_waypoints list that is closest to the red light so that the vehicle can be stopped. The waypoint update node uses this index to calculate the distance from the vehicle to the traffic light when the traffic light is red and the car needs to be stopped.
+
+- current_pose: To get the current position of the vehicle.
+The function of the waypoint update node is to process the waypoints provided by the waypoint loader and to prepare the next waypoints for the vehicle. The speed will be adjusted if there is a red light in front of you.
+
+For the described process, if the track waypoints are already loaded, the following steps are followed:
+
+- Identify the position of the car in the car (pose_cb): If one knows the position of the car in (x, y) -coordinates, the closed-track point is returned as an index, which is ordered according to its Euclidean distance. Then the next few points in front of you (defined by the constant LOOKAHEAD_WPS) are the last unprocessed waypoints.
+
+- Processing of waypoints (waypoints_process): The function runs through a loop through the following waypoints and the following options can run.
+
+- Traffic light not close or green: The speed of the waypoints is updated with the maximum permissible speed
+
+- Red and close traffic lights: the car has to stop. The speed is set to 0. set
+
+- Red traffic light in delay distance: car is approaching the traffic light, but is not yet that close. The speed decreases linearly.
+
+After the waypoints are updated, they are published and sent via the waypoint follower to the twist controller which implements the actuator commands. This node publishes on the following topics:
+
+- final_waypoints: Selected more than 100 waypoints including their speed information are published in this topic.
 
 
 ### Native Installation
