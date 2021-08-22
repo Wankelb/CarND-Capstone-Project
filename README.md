@@ -22,6 +22,11 @@ The car should:
 - Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled.
 - Publish throttle, steering, and brake commands at 50hz.
 
+# Video of Simulation
+<p align="center">
+<img src=".//vid29.gif">
+</p> 
+
 
 # System(ROS) Architecture
 The following is a system architecture diagram showing the ROS nodes and topics used in the project.
