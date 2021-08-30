@@ -2,6 +2,7 @@
 import rospy
 from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped, Pose
+from geometry_msgs.msg import TwistStamped
 from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
 from sensor_msgs.msg import Image
@@ -11,13 +12,14 @@ import tf
 import cv2
 import yaml
 from scipy.spatial import KDTree
+import sys
 
 STATE_COUNT_THRESHOLD = 3
 
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
-
+        
         self.pose = None
         self.waypoints = None
         self.camera_image = None
@@ -57,10 +59,10 @@ class TLDetector(object):
         self.pose = msg
 
     def waypoints_cb(self, waypoints):
-        self.base_waypoints = waypoints
-        if not self.waypoints_2d:
-             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for         waypoint in waypoints.waypoints]
-            self.waypoint_tree = KDTree(self.waypoints_2d)
+           self.base_waypoints = waypoints
+      if not self.waypoints_2d:
+         self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for         waypoint in waypoints.waypoints]
+         self.waypoint_tree = KDTree(self.waypoints_2d)
     
    
     def traffic_cb(self, msg):
