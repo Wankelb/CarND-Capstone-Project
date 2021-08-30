@@ -46,15 +46,15 @@ class WaypointUpdater(object):
         
         self.loop()
         
-        def loop(self):
-        rate = rospy.Rate(50)
-        while not rospy.is_shutdown():
-            if self.pose and self.base_lane and self.waypoint_tree:
-                self.publish_waypoints()
-            rate.sleep()
+    def loop(self):
+             rate = rospy.Rate(50)
+             while not rospy.is_shutdown():
+                  if self.pose and self.base_lane and self.waypoint_tree:
+                           self.publish_waypoints()
+                  rate.sleep()
 
             
-            def get_closest_waypoint_idx(self):
+    def get_closest_waypoint_idx(self):
         x = self.pose.pose.position.x
         y = self.pose.pose.position.y
         
@@ -133,7 +133,7 @@ class WaypointUpdater(object):
         # TODO: Implement
         pass
 
-  def waypoints_cb(self, waypoints):
+    def waypoints_cb(self, waypoints):
         # TODO: Implement
         self.base_lane = waypoints        
         if not self.waypoints_2d:
@@ -169,3 +169,4 @@ if __name__ == '__main__':
         WaypointUpdater()
     except rospy.ROSInterruptException:
         rospy.logerr('Could not start waypoint updater node.')
+
